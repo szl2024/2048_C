@@ -44,7 +44,7 @@ void init(size_t m_size) //初始化游戏
 
     size = m_size;
     len = size * size;
-    map = (int *)calloc(sizeof(int), len);
+    map = (int *)calloc(sizeof(int), len);//申请内存
     initStr();
 
     insert_one();
