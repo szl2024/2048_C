@@ -10,8 +10,14 @@ char topStr[512] = {0};
 char midStr[512] = {0};
 char bottomStr[512] = {0};
 
+/**
+ * 初始化字符串数组，用于绘制图形边框。
+ * 该函数不接受参数，也不返回任何值。
+ * 全局变量size决定了边框的长度。
+ */
 static void initStr()
 {
+    // 初始化顶部边框字符串
     strcpy(topStr, "┏━━━━━");
     for (size_t i = 0; i < size - 1; i++)
     {
@@ -19,6 +25,7 @@ static void initStr()
     }
     strcat(topStr, "┓");
 
+    // 初始化中间边框字符串
     strcpy(midStr, "┣━━━━━");
     for (size_t i = 0; i < size - 1; i++)
     {
@@ -26,6 +33,7 @@ static void initStr()
     }
     strcat(midStr, "┫");
 
+    // 初始化底部边框字符串
     strcpy(bottomStr, "┗━━━━━");
     for (size_t i = 0; i < size - 1; i++)
     {
@@ -34,47 +42,78 @@ static void initStr()
     strcat(bottomStr, "┛");
 }
 
-void init(size_t m_size) //初始化游戏
+/**
+ * 初始化游戏界面和基本设置
+ * @param m_size 游戏地图的大小（边长）
+ */
+void init(size_t m_size) 
 {
+    // 使用当前时间做种子初始化随机数生成器
     srand((unsigned)time(NULL));
+    // 清除屏幕
     system("clear");
-    system("stty -icanon -echo"); // 开启无缓冲 开启无回显
-    printf("\033[?25l");          // 隐藏光标
-    printf("\033[s");             // 保存光标位置
+    // 设置终端为无缓冲、无回显模式
+    system("stty -icanon -echo");
+    // 隐藏光标
+    printf("\033[?25l");
+    // 保存当前光标位置
+    printf("\033[s");
 
+    // 设置地图大小并计算总格数
     size = m_size;
     len = size * size;
-    map = (int *)calloc(sizeof(int), len);//申请内存
+    // 为地图申请内存
+    map = (int *)calloc(sizeof(int), len);
+    // 初始化游戏字符串（未给出的函数）
     initStr();
 
+    // 插入一个游戏元素（示例功能，具体实现未给出）
     insert_one();
+    // 展示游戏地图（未给出的函数）
     show();
 }
 
-void show() // 显示游戏界面
+/**
+ * @brief 显示游戏界面
+ * 
+ * 该函数负责输出游戏的界面，包括游戏标题、数字方块、分隔线以及当前分数。
+ * 利用控制字符调整光标位置、清除屏幕部分区域，并以规定的格式显示游戏内容。
+ * 
+ * @param 无
+ * @return 无
+ */
+void show() 
 {
-    printf("\033[u"); // 恢复光标位置
-    printf("\033[K"); // 清除从光标到行尾的内容
-    printf("\033[s"); // 保存光标位置
+    // 恢复光标到初始位置，清除当前行剩余内容，保存当前光标位置
+    printf("\033[u"); 
+    printf("\033[K"); 
+    printf("\033[s"); 
+    
+    // 显示游戏标题
     printf("\n\t\x1b[1;33;49m2048小游戏\x1b[0m\n");
-    printf("%s\n", topStr);
+    printf("%s\n", topStr); // 打印顶部分隔线
+    
+    // 遍历地图数组，以规定的格式显示每个方块的数字，或空方块
     size_t i, j;
     for (i = 0; i < size; i++)
     {
         for (j = 0; j < size; j++)
         {
-            size_t num = (size_t) * (map + i * size + j);
+            size_t num = (size_t) * (map + i * size + j); // 获取当前方块的数字
             if (num > 0)
-                printf("┃%4zu ", num);
+                printf("┃%4zu ", num); // 如果方块有数字，格式化后显示
             else
-                printf("┃     ");
+                printf("┃     "); // 如果方块为空，显示空白占位
         }
-        printf("┃\n");
+        printf("┃\n"); // 打印每行结束的分隔线
+        
         if (i == size - 1)
-            printf("%s\n", bottomStr);
+            printf("%s\n", bottomStr); // 如果是最后一行，打印底部分隔线
         else
-            printf("%s\n", midStr);
+            printf("%s\n", midStr); // 否则，打印中间分隔线
     }
+    
+    // 显示当前分数
     printf("\n分数: \x1b[1;33;49m%d\x1b[0m\n", score);
 }
 
